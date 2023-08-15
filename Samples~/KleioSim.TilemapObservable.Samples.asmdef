@@ -1,0 +1,19 @@
+{
+    "name": "KleioSim.TilemapObservable.Samples",
+    "rootNamespace": "KleioSim.Tilemaps",
+    "references": [
+        "KleioSim.TilemapObservable"
+    ],
+    "includePlatforms": [
+        
+    ],
+    "excludePlatforms": [
+    ],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

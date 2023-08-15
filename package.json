@@ -1,0 +1,23 @@
+{
+  "name": "com.kleiosim.tilemapobservable",
+  "version": "0.1.0",
+  "displayName": "Tilemap Observable",
+  "description": "",
+  "unity": "2022.1",
+  "documentationUrl": "",
+  "changelogUrl": "",
+  "keywords": [],
+  "author": {
+    "name": "Simon.S.Fong",
+    "email": "simon.s.fong@outlook.com"
+  },
+  "samples": [
+    {
+      "displayName": "Samples",
+      "description": "Samples",
+      "path": "Samples~"
+    }
+  ],
+  "dependencies": {
+  }
+}
