@@ -6,12 +6,13 @@ using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 namespace KleioSim.Tilemaps
 {
     [RequireComponent(typeof(Tilemap))]
-    public partial class TilemapObservable : MonoBehaviour
+    public partial class TilemapObservable : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField]
         private List<TilePair> tileSets;
@@ -53,7 +54,7 @@ namespace KleioSim.Tilemaps
 
         public string tileSetEnumType;
 
-        public UnityEvent<Vector3Int> OnClickTile;
+        public UnityEvent<DataItem> OnClickTile;
 
         private Tilemap tilemap => GetComponent<Tilemap>();
 
@@ -145,6 +146,31 @@ namespace KleioSim.Tilemaps
 
         public void Start()
         {
+            if (Camera.main.gameObject.GetComponent<Physics2DRaycaster>() == null)
+            {
+                Camera.main.gameObject.AddComponent<Physics2DRaycaster>();
+            }
+
+            if (gameObject.GetComponent<CompositeCollider2D>() == null)
+            {
+                var collider = gameObject.AddComponent<CompositeCollider2D>();
+                collider.geometryType = CompositeCollider2D.GeometryType.Polygons;
+
+                GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            }
+
+            if (gameObject.GetComponent<TilemapCollider2D>() == null)
+            {
+                var collider = gameObject.AddComponent<TilemapCollider2D>();
+                collider.usedByComposite = true;
+            }
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            var tpos = tilemap.WorldToCell(eventData.pointerCurrentRaycast.worldPosition);
+
+            OnClickTile?.Invoke(itemsource.Single(x=>x.Position == tpos));
         }
     }
 }

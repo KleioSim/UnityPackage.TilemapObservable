@@ -12,8 +12,10 @@ namespace KleioSim.Tilemaps
     [CustomEditor(typeof(TilemapObservable))]
     class TilemapObservableEditor : Editor
     {
-        ReorderableList tieItemList;
-        ReorderableList dataItemList;
+        private SerializedProperty onClickProperty;
+
+        private ReorderableList tieItemList;
+        private ReorderableList dataItemList;
 
         private new TilemapObservable target;
 
@@ -24,6 +26,8 @@ namespace KleioSim.Tilemaps
 
         private void OnEnable()
         {
+            onClickProperty = serializedObject.FindProperty(nameof(TilemapObservable.OnClickTile));
+
             var typeQuery = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes().Where(x =>x.IsEnum &&  x.GetCustomAttribute<TileSetEnumAttribute>() != null));
             tileSetEnumTypes = typeQuery.ToArray();
 
@@ -140,6 +144,8 @@ namespace KleioSim.Tilemaps
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+
+            EditorGUILayout.PropertyField(onClickProperty, true);
 
             EditorGUI.BeginChangeCheck();
             selected = EditorGUILayout.Popup("TileEnumType:", selected, tileSetEnumTypes.Select(x => x.Name).ToArray());
