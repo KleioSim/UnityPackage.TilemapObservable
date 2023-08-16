@@ -33,24 +33,6 @@ namespace KleioSim.Tilemaps
             }
         }
 
-        [SerializeField]
-        private List<DataItem> designDatas;
-        public List<DataItem> DesignDatas
-        {
-            get
-            {
-                if (designDatas == null)
-                {
-                    designDatas = new List<DataItem>();
-                }
-
-                return designDatas;
-            }
-            set
-            {
-                designDatas = value;
-            }
-        }
 
         public string tileSetEnumType;
 
@@ -58,10 +40,30 @@ namespace KleioSim.Tilemaps
 
         private Tilemap tilemap => GetComponent<Tilemap>();
 
+        [SerializeField]
+        private List<DataItem> itemsForSerialized;
         private ObservableCollection<DataItem> itemsource;
         public ObservableCollection<DataItem> Itemsource
         {
-            get => itemsource;
+            get
+            {
+                if(itemsource == null)
+                {
+                    itemsForSerialized ??= new List<DataItem>();
+
+                    itemsource = new ObservableCollection<DataItem>(itemsForSerialized);
+                    itemsource.CollectionChanged += Itemsource_CollectionChanged;
+
+                    foreach(var item in itemsForSerialized)
+                    {
+                        item.PropertyChanged += this.OnItemPropertyChanged;
+                    }
+
+                    Redraw();
+                }
+
+                return itemsource;
+            }
             set
             {
                 if (itemsource == value)
@@ -104,6 +106,8 @@ namespace KleioSim.Tilemaps
                     {
                         tilemap.SetTile(newItem.Position, pair.tile);
                     }
+
+                    itemsForSerialized.Add(newItem);
                 }
             }
 
@@ -114,6 +118,8 @@ namespace KleioSim.Tilemaps
                     oldItem.PropertyChanged -= this.OnItemPropertyChanged;
 
                     tilemap.SetTile(oldItem.Position, null);
+
+                    itemsForSerialized.Remove(oldItem);
                 }
             }
         }

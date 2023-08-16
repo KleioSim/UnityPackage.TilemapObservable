@@ -41,22 +41,22 @@ namespace KleioSim.Tilemaps
             tieItemList.drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "TileSets"); 
             tieItemList.drawElementCallback = DrawTileItemUI; 
 
-            dataItemList = new ReorderableList(target.DesignDatas, typeof(TilemapObservable.DataItem));
+            dataItemList = new ReorderableList(target.Itemsource, typeof(TilemapObservable.DataItem));
             dataItemList.draggable = false;
             dataItemList.drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, "DataItems");
             dataItemList.drawElementCallback = DrawDataItemUI;
             dataItemList.onAddCallback = (list) =>
             {
                 var position = Vector3Int.zero;
-                if(target.DesignDatas.Any())
+                if(target.Itemsource.Any())
                 {
-                    position = new Vector3Int(0, target.DesignDatas.Select(x => x.Position.y).Max() + 1);
+                    position = new Vector3Int(0, target.Itemsource.Select(x => x.Position.y).Max() + 1);
                 }
 
                 list.list.Add(new TilemapObservable.DataItem() { TileKey = currEnumItems[0], Position = position });
                 EditorUtility.SetDirty(target);
 
-                UpdateDesignView();
+                //UpdateDesignView();
             };
             dataItemList.onRemoveCallback = (list) =>
             {
@@ -64,11 +64,11 @@ namespace KleioSim.Tilemaps
                 EditorUtility.SetDirty(target);
 
                 //list.list.Remove(list.list[list.list.Count-1]);
-                UpdateDesignView();
+                //UpdateDesignView();
             };
 
 
-            UpdateDesignView();
+            //UpdateDesignView();
         }
 
         void DrawDataItemUI(Rect rect, int index, bool isActive, bool isFocused)
@@ -153,11 +153,12 @@ namespace KleioSim.Tilemaps
             {
                 target.tileSetEnumType = tileSetEnumTypes[selected].FullName;
 
-                target.DesignDatas.Clear();
+                target.Itemsource.Clear();
                 target.TileSets.Clear();
                 target.TileSets.AddRange(currEnumItems.Select(item => new TilemapObservable.TilePair() { key = item }));
+                target.Redraw();
 
-                UpdateDesignView();
+                //UpdateDesignView();
             }
 
             if(selected != -1)
@@ -169,25 +170,25 @@ namespace KleioSim.Tilemaps
             serializedObject.ApplyModifiedProperties();
         }
 
-        public void UpdateDesignView()
-        {
-            if (target.Itemsource == null)
-            {
-                target.Itemsource = new ObservableCollection<TilemapObservable.DataItem>();
-            }
+        //public void UpdateDesignView()
+        //{
+        //    if (target.Itemsource == null)
+        //    {
+        //        target.Itemsource = new ObservableCollection<TilemapObservable.DataItem>();
+        //    }
 
-            var oldItems = target.Itemsource.Except(target.DesignDatas).ToArray();
-            var newItems = target.DesignDatas.Except(target.Itemsource).ToArray();
+        //    var oldItems = target.Itemsource.Except(target.DesignDatas).ToArray();
+        //    var newItems = target.DesignDatas.Except(target.Itemsource).ToArray();
 
-            foreach (var item in oldItems)
-            {
-                target.Itemsource.Remove(item);
-            }
+        //    foreach (var item in oldItems)
+        //    {
+        //        target.Itemsource.Remove(item);
+        //    }
 
-            foreach (var item in newItems)
-            {
-                target.Itemsource.Add(item);
-            }
-        }
+        //    foreach (var item in newItems)
+        //    {
+        //        target.Itemsource.Add(item);
+        //    }
+        //}
     }
 }
