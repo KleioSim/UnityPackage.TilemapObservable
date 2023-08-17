@@ -58,8 +58,6 @@ namespace KleioSim.Tilemaps
                     {
                         item.PropertyChanged += this.OnItemPropertyChanged;
                     }
-
-                    Redraw();
                 }
 
                 return itemsource;
@@ -77,6 +75,11 @@ namespace KleioSim.Tilemaps
                 }
 
                 itemsource = value;
+                if (itemsource == null)
+                {
+                    return;
+                }
+
                 itemsource.CollectionChanged += Itemsource_CollectionChanged;
 
                 Redraw();
@@ -86,7 +89,7 @@ namespace KleioSim.Tilemaps
         public void Redraw()
         {
             tilemap.ClearAllTiles();
-            foreach (var item in itemsource)
+            foreach (var item in Itemsource)
             {
                 var pair = tileSets.Single(x => x.key == item.TileKey);
                 tilemap.SetTile(item.Position, pair.tile);
@@ -170,6 +173,8 @@ namespace KleioSim.Tilemaps
                 var collider = gameObject.AddComponent<TilemapCollider2D>();
                 collider.usedByComposite = true;
             }
+
+            Redraw();
         }
 
         public void OnPointerClick(PointerEventData eventData)
