@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace KleioSim.Tilemaps
@@ -31,10 +33,24 @@ namespace KleioSim.Tilemaps
             }
 
             [SerializeField]
-            private string tileKey;
-            public string TileKey
+            private string tileKeyStr;
+            [SerializeField]
+            private string tileKeyEnumType;
+
+            private Enum tileKey;
+            public Enum TileKey
             {
-                get => tileKey;
+                get
+                {
+                    if(tileKey == null)
+                    {
+                        var typeQuery = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes().Where(x => x.IsEnum && x.GetCustomAttribute<TileSetEnumAttribute>() != null));
+                        var enmType = typeQuery.Single(x => x.FullName == tileKeyEnumType);
+
+                        tileKey = Enum.Parse(enmType, tileKeyStr) as Enum;
+                    }
+                    return tileKey;
+                }
                 set
                 {
                     if(tileKey == value)
@@ -44,6 +60,9 @@ namespace KleioSim.Tilemaps
 
                     var oldValue = tileKey;
                     tileKey = value;
+
+                    tileKeyStr = tileKey.ToString();
+                    tileKeyEnumType = tileKey.GetType().FullName;
 
                     PropertyChanged?.Invoke(this, new DataItemPropertyChangedEventArgs(nameof(TileKey), tileKey, oldValue));
                 }

@@ -91,7 +91,7 @@ namespace KleioSim.Tilemaps
             tilemap.ClearAllTiles();
             foreach (var item in Itemsource)
             {
-                var pair = tileSets.Single(x => x.key == item.TileKey);
+                var pair = tileSets.Single(x => x.key == item.TileKey.ToString());
                 tilemap.SetTile(item.Position, pair.tile);
             }
         }
@@ -104,7 +104,7 @@ namespace KleioSim.Tilemaps
                 {
                     newItem.PropertyChanged += this.OnItemPropertyChanged;
 
-                    var pair = tileSets.SingleOrDefault(x => x.key == newItem.TileKey);
+                    var pair = tileSets.SingleOrDefault(x => x.key == newItem.TileKey.ToString());
                     if(pair != null)
                     {
                         tilemap.SetTile(newItem.Position, pair.tile);
@@ -136,14 +136,14 @@ namespace KleioSim.Tilemaps
                 case nameof(DataItem.Position):
                     {
                         var item = sender as DataItem;
-                        var pair = tileSets.Single(x => x.key == item.TileKey);
+                        var pair = tileSets.Single(x => x.key == item.TileKey.ToString());
                         tilemap.SetTile(item.Position, pair.tile);
                         tilemap.SetTile((Vector3Int)args.oldValue, null);
                     }
                     break;
                 case nameof(DataItem.TileKey):
                     {
-                        var pair = tileSets.Single(x => x.key == (string)args.newValue);
+                        var pair = tileSets.Single(x => x.key == args.newValue.ToString());
                         var item = sender as DataItem;
                         tilemap.SetTile(item.Position, pair.tile);
                     }

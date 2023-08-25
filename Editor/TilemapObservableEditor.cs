@@ -22,7 +22,7 @@ namespace KleioSim.Tilemaps
         private Type[] tileSetEnumTypes;
         private int selected;
 
-        private string[] currEnumItems => Enum.GetNames(tileSetEnumTypes[selected]);
+        private Enum[] currEnumItems => Enum.GetValues(tileSetEnumTypes[selected]).OfType<Enum>().ToArray();
 
         private void OnEnable()
         {
@@ -75,17 +75,11 @@ namespace KleioSim.Tilemaps
         {
             var item = (TilemapObservable.DataItem)dataItemList.list[index];
 
-            if(!Enum.TryParse(tileSetEnumTypes[selected], item.TileKey, out object tileEnum))
-            {
-                throw new Exception($"can not parse '{item.TileKey}' to enum '{tileSetEnumTypes[selected]}'");
-            }
-
             item.TileKey = EditorGUI.EnumPopup
                 (
                     new Rect(rect.x + rect.width / 2, rect.y, rect.width / 2, EditorGUIUtility.singleLineHeight),
-                    tileEnum as Enum
-                )
-                .ToString();
+                    item.TileKey
+                );
 
             EditorGUI.BeginChangeCheck();
 
@@ -155,7 +149,7 @@ namespace KleioSim.Tilemaps
 
                 target.Itemsource.Clear();
                 target.TileSets.Clear();
-                target.TileSets.AddRange(currEnumItems.Select(item => new TilemapObservable.TilePair() { key = item }));
+                target.TileSets.AddRange(currEnumItems.Select(item => new TilemapObservable.TilePair() { key = item.ToString() }));
                 target.Redraw();
 
                 //UpdateDesignView();
