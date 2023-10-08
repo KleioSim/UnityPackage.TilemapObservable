@@ -132,6 +132,8 @@ namespace KleioSim.Tilemaps
             if(EditorGUI.EndChangeCheck())
             {
                 target.Redraw();
+
+                EditorUtility.SetDirty(target);
             }
         }
 
